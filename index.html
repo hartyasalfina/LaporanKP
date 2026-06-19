@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TrackBarang — Pantauan Stok</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --green:#1D9E75;--green-dk:#0F6E56;--green-lt:#E1F5EE;
+  --blue-lt:#E6F1FB;--blue-tx:#185FA5;
+  --amber-lt:#FAEEDA;--amber-tx:#854F0B;
+  --red-lt:#FCEBEB;--red:#E24B4A;--red-dk:#A32D2D;
+  --purple-lt:#EEEDFE;--purple-tx:#3C3489;
+  --bg:#F5F5F2;--surface:#fff;--border:rgba(0,0,0,.1);--border-md:rgba(0,0,0,.18);
+  --text:#1a1a1a;--muted:#6b6b6b;--r:10px;--rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(135deg,#f0faf6,#e8f4fd)}
+.lcard{background:var(--surface);border-radius:20px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 4px 40px rgba(0,0,0,.08);border:1px solid var(--border)}
+.llogo{width:56px;height:56px;background:var(--green);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin:0 auto 1.25rem}
+.ltitle{text-align:center;font-size:22px;font-weight:700;margin-bottom:4px}
+.lsub{text-align:center;font-size:14px;color:var(--muted);margin-bottom:2rem}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px}
+.brand-name{font-size:16px;font-weight:700}
+.brand-info{font-size:12px;color:var(--muted)}
+.topnav{display:flex;gap:4px}
+.navbtn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:13px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:6px;transition:all .15s}
+.navbtn:hover{background:var(--bg)}
+.navbtn.active{background:var(--green-lt);color:var(--green-dk);border-color:var(--green);font-weight:600}
+
+/* SCREENS */
+.screen{display:none;padding:1.25rem;max-width:1100px;margin:0 auto}
+.screen.active{display:block}
+
+/* CARDS */
+.card{background:var(--surface);border-radius:var(--rl);border:1px solid var(--border);padding:1.25rem;margin-bottom:1rem}
+.ctitle{font-size:15px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.ctitle i{color:var(--green);font-size:16px}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:.9rem 1rem;display:flex;align-items:center;gap:10px}
+.mi{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.mi.g{background:var(--green-lt);color:var(--green-dk)}
+.mi.b{background:var(--blue-lt);color:var(--blue-tx)}
+.mi.a{background:var(--amber-lt);color:var(--amber-tx)}
+.mi.p{background:var(--purple-lt);color:var(--purple-tx)}
+.mval{font-size:22px;font-weight:700;line-height:1}
+.mlbl{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* FORM */
+.frow{display:grid;gap:10px;margin-bottom:10px}
+.frow.c2{grid-template-columns:1fr 1fr}
+.frow.c3{grid-template-columns:1fr 1fr 1fr}
+.frow.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+input,select{width:100%;padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);font-size:13px;background:var(--surface);color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+input[readonly]{background:#f9f9f7;color:var(--muted);cursor:default}
+.search-wrap{position:relative}
+.search-wrap input{padding-left:30px}
+.search-wrap .si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border-md);border-radius:var(--r);max-height:220px;overflow-y:auto;z-index:200;display:none}
+.autocomplete-list.show{display:block}
+.ac-item{padding:7px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border)}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:var(--bg)}
+.ac-code{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border-md);border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text);transition:all .15s}
+.btn:hover{background:var(--bg)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-primary:hover{background:var(--green-dk);border-color:var(--green-dk)}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-danger:hover{background:var(--red-dk)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-ghost{border-color:transparent;background:transparent}
+.btn-ghost:hover{background:var(--bg)}
+
+/* TABLE */
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{border-bottom:1px solid var(--border)}
+th{text-align:left;padding:7px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#fafaf8}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bg-green{background:var(--green-lt);color:var(--green-dk)}
+.bg-blue{background:var(--blue-lt);color:var(--blue-tx)}
+.bg-amber{background:var(--amber-lt);color:var(--amber-tx)}
+.bg-red{background:var(--red-lt);color:var(--red-dk)}
+.bg-purple{background:var(--purple-lt);color:var(--purple-tx)}
+
+/* KELP BADGE COLORS */
+.kelp-1{background:#E1F5EE;color:#0F6E56}
+.kelp-2{background:#E6F1FB;color:#185FA5}
+.kelp-3{background:#FAEEDA;color:#854F0B}
+.kelp-4{background:#EEEDFE;color:#3C3489}
+.kelp-5{background:#FCEBEB;color:#A32D2D}
+.kelp-6{background:#F1EFE8;color:#5F5E5A}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:1.25rem}
+.tab{padding:8px 16px;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:10px}
+.ae{background:var(--red-lt);color:var(--red-dk);border:1px solid #f7c1c1}
+.as{background:var(--green-lt);color:var(--green-dk);border:1px solid #9FE1CB}
+.aw{background:var(--amber-lt);color:var(--amber-tx);border:1px solid #FAC775;display:flex;align-items:center;gap:10px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--rl);padding:1.5rem;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.15)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;font-size:16px;font-weight:700}
+
+/* PAGINATION */
+.pagination{display:flex;gap:4px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+.pgbtn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer;color:var(--text)}
+.pgbtn:hover{background:var(--bg)}
+.pgbtn.active{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* MISC */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty i{font-size:32px;display:block;margin-bottom:8px;opacity:.4}
+.divider{height:1px;background:var(--border);margin:1rem 0}
+.gap8{display:flex;gap:8px;align-items:center}
+.fw6{font-weight:600}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filter-bar select{width:auto;min-width:140px}
+.filter-bar input{width:auto;min-width:200px}
+.info-row{font-size:12px;color:var(--muted);margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="lcard">
+    <div class="llogo"><i class="fa-solid fa-boxes-stacked"></i></div>
+    <h1 class="ltitle">TrackBarang</h1>
+    <p class="lsub">Pantauan Stok — Sistem Tracking Inventory Harian</p>
+    <div id="loginErr" class="alert ae" style="display:none"></div>
+<div class="fg" style="margin-bottom:14px"><label>Username</label><input type="text" id="lUser" placeholder="Nama operator..."/></div>
+<div class="fg" style="margin-bottom:1.25rem"><label>Tanggal Kerja</label><input type="date" id="lDate"/></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:11px" onclick="doLogin()">
+      <i class="fa-solid fa-right-to-bracket"></i> Masuk
+    </button>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ═══════════════════════════════ -->
+<div id="mainApp" style="display:none">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+      <div>
+        <div class="brand-name">TrackBarang</div>
+        <div class="brand-info" id="hInfo">—</div>
+      </div>
+    </div>
+    <div class="topnav">
+      <button class="navbtn active" id="navTracking" onclick="showScreen('tracking')"><i class="fa-solid fa-list-check"></i> Tracking</button>
+      <button class="navbtn" id="navLibrary" onclick="showScreen('library')"><i class="fa-solid fa-book"></i> Master</button>
+      <button class="navbtn" id="navReceipt" onclick="showScreen('receipt')"><i class="fa-solid fa-receipt"></i> Receipt</button>
+      <button class="btn btn-sm btn-ghost" onclick="doLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+  </div>
+
+  <!-- ── TRACKING ────────────────── -->
+  <div id="trackingScreen" class="screen active">
+    <div id="endMonthAlert" class="aw" style="display:none;margin-bottom:1rem">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size:18px"></i>
+      <span>Sudah akhir bulan! Jangan lupa cek <strong>Receipt Bulanan</strong>.</span>
+      <button class="btn btn-sm" style="margin-left:auto;background:var(--amber-tx);color:#fff;border:none" onclick="showScreen('receipt')">Lihat Receipt</button>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="mi g"><i class="fa-solid fa-box-open"></i></div><div><div class="mval" id="mToday">0</div><div class="mlbl">Item Hari Ini</div></div></div>
+      <div class="metric"><div class="mi b"><i class="fa-solid fa-calendar-days"></i></div><div><div class="mval" id="mMonth">0</div><div class="mlbl">Item Bulan Ini</div></div></div>
+      <div class="metric"><div class="mi a"><i class="fa-solid fa-truck"></i></div><div><div class="mval" id="mSupplier">0</div><div class="mlbl">Supplier Aktif</div></div></div>
+      <div class="metric"><div class="mi p"><i class="fa-solid fa-layer-group"></i></div><div><div class="mval" id="mKelp">0</div><div class="mlbl">Kategori</div></div></div>
+    </div>
+
+    <!-- CHART MINGGUAN & BULANAN -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+
+      <!-- Chart Mingguan -->
+      <div class="card">
+        <div class="ctitle"><i class="fa-solid fa-chart-bar"></i> Pembelian 7 Hari Terakhir</div>
+        <canvas id="chartMingguan" height="160"></canvas>
+      </div>
+
+      <!-- Chart Bulanan -->
+      <div class="card">
+        <div class="ctitle"><i class="fa-solid fa-chart-line"></i> Pembelian 6 Bulan Terakhir</div>
+        <canvas id="chartBulanan" height="160"></canvas>
+      </div>
+
+    </div>
+
+    <!-- INPUT FORM -->
+    <div class="card">
+      <div class="ctitle"><i class="fa-solid fa-circle-plus"></i> Catat Barang Masuk</div>
+
+      <!-- Pencarian barang dengan autocomplete -->
+      <div class="frow c2" style="margin-bottom:10px">
+        <div class="fg" style="position:relative">
+          <label>Cari Barang (nama / kode)</label>
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass si"></i>
+            <input type="text" id="fSearch" placeholder="Ketik nama atau kode barang..." autocomplete="off" oninput="onSearchItem()"/>
+          </div>
+          <div class="autocomplete-list" id="acList"></div>
+        </div>
+        <div class="fg">
+          <label>Filter Kategori</label>
+          <select id="fKelpFilter" onchange="onKelpFilter()">
+            <option value="">Semua kategori</option>
+            <option value="1.SEMEN">1. Semen</option>
+            <option value="2.BESI">2. Besi</option>
+            <option value="3.ASBES">3. Asbes</option>
+            <option value="4.BOARD">4. Board</option>
+            <option value="5.BAHAN">5. Bahan</option>
+            <option value="6.GRB">6. GRB</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Info barang terpilih -->
+      <div id="selectedItemInfo" style="display:none;background:var(--green-lt);border:1px solid #9FE1CB;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:13px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <span style="font-weight:600" id="siName">-</span>
+            <span class="badge" id="siKelp" style="margin-left:8px">-</span>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="clearSelectedItem()" style="color:var(--muted)"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="margin-top:6px;display:flex;gap:16px;flex-wrap:wrap">
+          <span><span style="color:var(--muted)">Kode:</span> <strong id="siCode">-</strong></span>
+          <span><span style="color:var(--muted)">Supplier:</span> <strong id="siSup">-</strong></span>
+          <span><span style="color:var(--muted)">Ukuran:</span> <strong id="siUkuran">-</strong></span>
+        </div>
+      </div>
+
+      <div class="frow c3">
+        <div class="fg"><label>Jumlah (KWT MSK)</label><input type="number" id="fQty" placeholder="0" min="0.01" step="0.01"/></div>
+        <div class="fg">
+          <label>Satuan</label>
+          <select id="fSat">
+            <option>ZAK</option><option>TON</option><option>LBR</option><option>BTG</option>
+            <option>PCS</option><option>KG</option><option>ROLL</option><option>M</option>
+            <option>M2</option><option>M3</option><option>BOX</option><option>SET</option>
+          </select>
+        </div>
+        <div class="fg"><label>Kode Barang (otomatis)</label><input type="text" id="fCode" readonly placeholder="—"/></div>
+      </div>
+
+      <input type="hidden" id="fItemId"/>
+      <input type="hidden" id="fSupplierCode"/>
+      <input type="hidden" id="fKelp"/>
+      <input type="hidden" id="fUkuran"/>
+
+      <div id="trackErr" class="alert ae" style="display:none"></div>
+      <button class="btn btn-primary" id="btnCatat" onclick="addTracking()"><i class="fa-solid fa-check"></i> Catat Barang</button>
+    </div>
+
+    <!-- Tabel hari ini -->
+    <div class="card">
+      <div class="ctitle"><i class="fa-solid fa-clock-rotate-left"></i>
+        Tracking Hari Ini — <span id="todayLbl" style="color:var(--muted);font-weight:400;font-size:13px"></span>
+      </div>
+      <div id="todayTable"></div>
+    </div>
+  </div>
+
+  <!-- ── LIBRARY ─────────────────── -->
+  <div id="libraryScreen" class="screen">
+    <div class="tabs">
+      <div class="tab active" id="tabItems" onclick="switchTab('items')"><i class="fa-solid fa-box"></i> Master Barang (636)</div>
+      <div class="tab" id="tabSuppliers" onclick="switchTab('suppliers')"><i class="fa-solid fa-truck"></i> Master Supplier</div>
+    </div>
+
+    <!-- ITEMS PANEL -->
+    <div id="panelItems">
+      <div class="card">
+        <div class="ctitle"><i class="fa-solid fa-plus"></i> Tambah Barang Baru</div>
+        <div class="frow c4">
+          <div class="fg"><label>Nama Barang</label><input type="text" id="liName" placeholder="cth: Semen PCC 40kg"/></div>
+          <div class="fg"><label>Kode Barang</label><input type="text" id="liCode" placeholder="cth: 10110009"/></div>
+          <div class="fg">
+            <label>Kategori (KELP)</label>
+            <select id="liKelp">
+              <option value="">— Pilih —</option>
+              <option value="1.SEMEN">1. Semen</option><option value="2.BESI">2. Besi</option>
+              <option value="3.ASBES">3. Asbes</option><option value="4.BOARD">4. Board</option>
+              <option value="5.BAHAN">5. Bahan</option><option value="6.GRB">6. GRB</option>
+            </select>
+          </div>
+          <div class="fg"><label>Ukuran</label><input type="text" id="liUkuran" placeholder="cth: 240x120x3.5"/></div>
+        </div>
+        <div class="frow c2">
+          <div class="fg">
+            <label>Supplier</label>
+            <select id="liSup"><option value="">— Pilih supplier —</option></select>
+          </div>
+          <div class="fg"><label>Nama Supplier (tampil)</label><input type="text" id="liSupName" readonly placeholder="Otomatis dari pilihan"/></div>
+        </div>
+        <div id="itemErr" class="alert ae" style="display:none"></div>
+        <button class="btn btn-primary" onclick="addItem()"><i class="fa-solid fa-plus"></i> Tambah Barang</button>
+      </div>
+
+      <div class="card">
+        <div class="ctitle"><i class="fa-solid fa-list"></i> Daftar Master Barang</div>
+        <div class="filter-bar">
+          <div class="search-wrap" style="flex:1;min-width:200px">
+            <i class="fa-solid fa-magnifying-glass si"></i>
+            <input type="text" id="itemSearch" placeholder="Cari nama / kode barang..." oninput="filterItems()" style="padding-left:30px"/>
+          </div>
+          <select id="itemKelpFilter" onchange="filterItems()">
+            <option value="">Semua kategori</option>
+            <option value="1.SEMEN">1. Semen</option><option value="2.BESI">2. Besi</option>
+            <option value="3.ASBES">3. Asbes</option><option value="4.BOARD">4. Board</option>
+            <option value="5.BAHAN">5. Bahan</option><option value="6.GRB">6. GRB</option>
+          </select>
+          <select id="itemSupFilter" onchange="filterItems()">
+            <option value="">Semua supplier</option>
+          </select>
+        </div>
+        <div class="info-row" id="itemsInfo"></div>
+        <div class="twrap" id="itemsTable"></div>
+        <div class="pagination" id="itemsPagination"></div>
+      </div>
+    </div>
+
+    <!-- SUPPLIERS PANEL -->
+    <div id="panelSuppliers" style="display:none">
+      <div class="card">
+        <div class="ctitle"><i class="fa-solid fa-plus"></i> Tambah Supplier</div>
+        <div class="frow c3">
+          <div class="fg"><label>Nama Supplier</label><input type="text" id="lsName" placeholder="cth: PT. Maju Jaya"/></div>
+          <div class="fg"><label>Kode Supplier</label><input type="text" id="lsCode" placeholder="cth: SUP-050"/></div>
+          <div class="fg"><label>Telepon</label><input type="text" id="lsPhone" placeholder="cth: 0812-xxxx"/></div>
+        </div>
+        <div id="supErr" class="alert ae" style="display:none"></div>
+        <button class="btn btn-primary" onclick="addSupplier()"><i class="fa-solid fa-plus"></i> Tambah Supplier</button>
+      </div>
+      <div class="card">
+        <div class="ctitle"><i class="fa-solid fa-list"></i> Daftar Supplier (<span id="supCount">0</span>)</div>
+        <div class="filter-bar">
+          <div class="search-wrap" style="flex:1">
+            <i class="fa-solid fa-magnifying-glass si"></i>
+            <input type="text" id="supSearch" placeholder="Cari supplier..." oninput="filterSuppliers()" style="padding-left:30px"/>
+          </div>
+        </div>
+        <div class="twrap" id="suppliersTable"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RECEIPT ─────────────────── -->
+  <div id="receiptScreen" class="screen">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem">
+      <div><h2 style="font-size:18px;font-weight:700">Receipt Bulanan</h2><p style="font-size:13px;color:var(--muted)">Rekap pembelian dari tracking harian</p></div>
+      <div class="gap8">
+        <select id="rcMonth" onchange="loadReceipt()" style="width:auto;min-width:160px"></select>
+        <button class="btn btn-primary" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+      </div>
+    </div>
+    <div id="receiptBody"></div>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-hdr"><span id="modalTitle">Konfirmasi</span><button class="btn btn-sm btn-ghost" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>
+    <p id="modalMsg" style="font-size:13px;color:var(--muted);margin-bottom:1.5rem"></p>
+    <div class="gap8" style="justify-content:flex-end">
+      <button class="btn" onclick="closeModal()">Batal</button>
+      <button class="btn btn-danger" id="modalOkBtn"><i class="fa-solid fa-trash"></i> Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3000/api';
+let currentUser=null, currentDate=null, currentCabang=null;
+let items=[], suppliers=[], todayTracking=[], cabangList=[];
+let filteredItems=[], itemPage=1; const ITEMS_PER_PAGE=20;
+let deleteCallback=null, receiptData=null, selectedItem=null;
+
+// ─── API HELPER ──────────────────────────────
+async function apiFetch(path, method='GET', body=null) {
+  const opts = { method, headers: {'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || 'Request gagal');
+  return data;
+}
+
+// ─── INIT ─────────────────────────────────────
+async function initLogin() {
+  document.getElementById('lDate').value = new Date().toISOString().split('T')[0];
+}
+
+// ─── LOGIN / LOGOUT ───────────────────────────
+async function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const d = document.getElementById('lDate').value;
+  const err = document.getElementById('loginErr');
+
+  if (!u) { showErr(err,'Username tidak boleh kosong'); return; }
+  if (!d) { showErr(err,'Pilih tanggal kerja'); return; }
+  err.style.display='none';
+
+  currentUser=u; currentDate=d; currentCabang='';
+
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  document.getElementById('hInfo').textContent = u + ' — ' + formatDate(d);
+  document.getElementById('todayLbl').textContent = formatDate(d);
+
+  checkEndMonth();
+  await loadAll();
+  populateReceiptMonths();
+}
+function doLogout() {
+  currentUser=null; currentDate=null; currentCabang=null;
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+// ─── LOAD DATA ────────────────────────────────
+async function loadAll() {
+  await Promise.all([loadItems(), loadSuppliers(), loadTodayTracking()]);
+  updateMetrics(); renderTodayTable(); renderItemsTable(); renderSuppliersTable();
+  populateDropdowns();
+}
+async function loadItems() { try { items = await apiFetch('/items'); filteredItems = [...items]; } catch { items=[]; filteredItems=[]; } }
+async function loadSuppliers() { try { suppliers = await apiFetch('/suppliers'); } catch { suppliers=[]; } }
+async function loadTodayTracking() { try { todayTracking = await apiFetch('/tracking?date=' + currentDate); } catch { todayTracking=[]; } }
+
+// ─── SCREEN NAV ───────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById(name+'Screen').classList.add('active');
+  document.getElementById('nav'+cap(name)).classList.add('active');
+  if (name==='tracking') { loadTodayTracking().then(()=>{ renderTodayTable(); updateMetrics(); }); }
+  if (name==='library')  { loadAll(); }
+  if (name==='receipt')  { populateReceiptMonths(); loadReceipt(); }
+}
+function switchTab(tab) {
+  document.getElementById('panelItems').style.display = tab==='items'?'block':'none';
+  document.getElementById('panelSuppliers').style.display = tab==='suppliers'?'block':'none';
+  document.getElementById('tabItems').classList.toggle('active',tab==='items');
+  document.getElementById('tabSuppliers').classList.toggle('active',tab==='suppliers');
+}
+
+// ─── ITEM SEARCH / AUTOCOMPLETE ───────────────
+let acTimeout=null;
+function onSearchItem() {
+  clearTimeout(acTimeout);
+  acTimeout = setTimeout(()=>{
+    const q = document.getElementById('fSearch').value.trim().toLowerCase();
+    const kelp = document.getElementById('fKelpFilter').value;
+    const list = document.getElementById('acList');
+    if (q.length < 1) { list.classList.remove('show'); return; }
+    let filtered = items;
+    if (kelp) filtered = filtered.filter(i => i.kelp === kelp);
+    filtered = filtered.filter(i =>
+      i.name.toLowerCase().includes(q) || i.code.toLowerCase().includes(q) ||
+      (i.supplierName||'').toLowerCase().includes(q)
+    ).slice(0,30);
+    if (!filtered.length) { list.innerHTML='<div class="ac-item" style="color:var(--muted)">Barang tidak ditemukan</div>'; list.classList.add('show'); return; }
+    list.innerHTML = filtered.map(it => `
+      <div class="ac-item" onclick="selectItem('${esc(it.id)}')">
+        <div><strong>${esc(it.name)}</strong></div>
+        <div class="ac-code">${esc(it.code)} &nbsp;|&nbsp; ${esc(it.supplierName||'—')} ${it.ukuran ? '&nbsp;|&nbsp; '+esc(it.ukuran):''}</div>
+      </div>`).join('');
+    list.classList.add('show');
+  }, 200);
+}
+
+function onKelpFilter() { onSearchItem(); }
+
+function selectItem(id) {
+  selectedItem = items.find(i => i.id === id);
+  if (!selectedItem) return;
+  document.getElementById('fSearch').value = selectedItem.name;
+  document.getElementById('acList').classList.remove('show');
+  document.getElementById('fCode').value = selectedItem.code;
+  document.getElementById('fItemId').value = selectedItem.id;
+  document.getElementById('fSupplierCode').value = selectedItem.supplierCode||'';
+  document.getElementById('fKelp').value = selectedItem.kelp||'';
+  document.getElementById('fUkuran').value = selectedItem.ukuran||'';
+  document.getElementById('siName').textContent = selectedItem.name;
+  document.getElementById('siCode').textContent = selectedItem.code;
+  document.getElementById('siSup').textContent = selectedItem.supplierName || '—';
+  document.getElementById('siUkuran').textContent = selectedItem.ukuran || '—';
+  const kb = document.getElementById('siKelp');
+  kb.textContent = selectedItem.kelp||'';
+  kb.className = 'badge ' + kelpClass(selectedItem.kelp);
+  document.getElementById('selectedItemInfo').style.display='block';
+}
+
+function clearSelectedItem() {
+  selectedItem=null;
+  document.getElementById('fSearch').value='';
+  document.getElementById('fCode').value='';
+  document.getElementById('fItemId').value='';
+  document.getElementById('selectedItemInfo').style.display='none';
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#acList') && !e.target.closest('#fSearch')) {
+    document.getElementById('acList').classList.remove('show');
+  }
+});
+
+// ─── TRACKING ─────────────────────────────────
+async function addTracking() {
+  const itemId = document.getElementById('fItemId').value;
+  const qty    = parseFloat(document.getElementById('fQty').value);
+  const sat    = document.getElementById('fSat').value;
+  const err    = document.getElementById('trackErr');
+  if (!itemId)    { showErr(err,'Pilih barang terlebih dahulu'); return; }
+  if (!qty||qty<=0){ showErr(err,'Jumlah harus lebih dari 0'); return; }
+  err.style.display='none';
+  setBtnLoading('btnCatat',true,'Menyimpan...');
+  try {
+    await apiFetch('/tracking','POST',{
+      date:currentDate, user:currentUser,
+      itemId, itemName:selectedItem.name, itemCode:selectedItem.code,
+      supplierCode:selectedItem.supplierCode||'', supplierName:selectedItem.supplierName||'',
+      qty, sat, kelp:selectedItem.kelp||'', ukuran:selectedItem.ukuran||''
+    });
+    document.getElementById('fQty').value='';
+    clearSelectedItem();
+    await loadTodayTracking(); renderTodayTable(); updateMetrics();
+  } catch(e) { showErr(err, e.message); }
+  setBtnLoading('btnCatat',false,'<i class="fa-solid fa-check"></i> Catat Barang');
+}
+
+function renderTodayTable() {
+  const el = document.getElementById('todayTable');
+  if (!todayTracking.length) { el.innerHTML=emptyState('Belum ada barang dicatat hari ini'); return; }
+  el.innerHTML = `<div class="twrap"><table>
+    <thead><tr><th>Nama Barang</th><th>Kode</th><th>Kategori</th><th>Ukuran</th><th>Supplier</th><th>Jumlah</th><th>Sat</th><th>Operator</th><th></th></tr></thead>
+    <tbody>${todayTracking.map(t=>`
+      <tr>
+        <td class="fw6">${esc(t.itemName)}</td>
+        <td><span class="badge bg-blue">${esc(t.itemCode)}</span></td>
+        <td><span class="badge ${kelpClass(t.kelp)}">${esc(t.kelp||'—')}</span></td>
+        <td style="color:var(--muted);font-size:12px">${esc(t.ukuran||'—')}</td>
+        <td style="font-size:12px">${esc(t.supplierName||'—')}</td>
+        <td><strong>${t.qty}</strong></td>
+        <td style="color:var(--muted)">${esc(t.sat||'')}</td>
+        <td style="color:var(--muted);font-size:12px">${esc(t.user)}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="confirmDelete('Tracking','Hapus catatan ini?',()=>delTracking('${t.id}'))"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+async function delTracking(id) {
+  await apiFetch('/tracking/'+id,'DELETE');
+  await loadTodayTracking(); renderTodayTable(); updateMetrics();
+}
+
+// ─── CHART INSTANCES ──────────────────────────
+let chartMingguanInstance = null;
+let chartBulananInstance  = null;
+
+async function updateMetrics() {
+  const ym = currentDate.substring(0, 7);
+  const monthData = await apiFetch('/tracking?month=' + ym).catch(() => []);
+
+  const todayQty = todayTracking.reduce((a, t) => a + t.qty, 0);
+  const monthQty = monthData.reduce((a, t) => a + t.qty, 0);
+  const supSet   = new Set(monthData.filter(t => t.supplierCode).map(t => t.supplierCode));
+  const kelpSet  = new Set(monthData.filter(t => t.kelp).map(t => t.kelp));
+
+  document.getElementById('mToday').textContent    = todayQty.toFixed(0);
+  document.getElementById('mMonth').textContent    = monthQty.toFixed(0);
+  document.getElementById('mSupplier').textContent = supSet.size;
+  document.getElementById('mKelp').textContent     = kelpSet.size;
+
+  // Chart Mingguan
+  const hariLabels = [], hariQty = [];
+  for (let i = 6; i >= 0; i--) {
+    const tgl = new Date(currentDate);
+    tgl.setDate(tgl.getDate() - i);
+    const tglStr   = tgl.toISOString().split('T')[0];
+    const namaHari = tgl.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' });
+    hariLabels.push(namaHari);
+    const qtyHari  = [...monthData, ...todayTracking]
+      .filter(t => t.date === tglStr)
+      .reduce((a, t) => a + t.qty, 0);
+    hariQty.push(qtyHari);
+  }
+  if (chartMingguanInstance) chartMingguanInstance.destroy();
+  chartMingguanInstance = new Chart(document.getElementById('chartMingguan'), {
+    type: 'bar',
+    data: {
+      labels: hariLabels,
+      datasets: [{ label: 'Total Qty', data: hariQty,
+        backgroundColor: 'rgba(29,158,117,0.7)', borderColor: '#1D9E75',
+        borderWidth: 1, borderRadius: 6 }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { font: { size: 11 } } },
+                x: { ticks: { font: { size: 11 } } } } }
+  });
+
+  // Chart Bulanan
+  const bulanLabels = [], bulanQty = [];
+  const bulanNames  = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  for (let i = 5; i >= 0; i--) {
+    const tgl = new Date(currentDate);
+    tgl.setMonth(tgl.getMonth() - i);
+    const y  = tgl.getFullYear();
+    const mo = String(tgl.getMonth() + 1).padStart(2, '0');
+    bulanLabels.push(bulanNames[tgl.getMonth()] + ' ' + y);
+    const dataBulan  = await apiFetch('/tracking?month=' + y + '-' + mo).catch(() => []);
+    bulanQty.push(dataBulan.reduce((a, t) => a + t.qty, 0));
+  }
+  if (chartBulananInstance) chartBulananInstance.destroy();
+  chartBulananInstance = new Chart(document.getElementById('chartBulanan'), {
+    type: 'line',
+    data: {
+      labels: bulanLabels,
+      datasets: [{ label: 'Total Qty', data: bulanQty,
+        borderColor: '#185FA5', backgroundColor: 'rgba(24,95,165,0.1)',
+        borderWidth: 2, pointBackgroundColor: '#185FA5',
+        pointRadius: 5, fill: true, tension: 0.4 }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { font: { size: 11 } } },
+                x: { ticks: { font: { size: 11 } } } } }
+  });
+}
+
+// ─── LIBRARY: ITEMS ───────────────────────────
+function filterItems() {
+  const q     = (document.getElementById('itemSearch').value||'').toLowerCase();
+  const kelp  = document.getElementById('itemKelpFilter').value;
+  const supC  = document.getElementById('itemSupFilter').value;
+  filteredItems = items.filter(it => {
+    const matchQ    = !q || it.name.toLowerCase().includes(q) || it.code.toLowerCase().includes(q) || (it.supplierName||'').toLowerCase().includes(q);
+    const matchKelp = !kelp || it.kelp === kelp;
+    const matchSup  = !supC || it.supplierCode === supC;
+    return matchQ && matchKelp && matchSup;
+  });
+  itemPage=1; renderItemsTable();
+}
+
+function renderItemsTable() {
+  const el = document.getElementById('itemsTable');
+  document.getElementById('itemsInfo').textContent = `Menampilkan ${filteredItems.length} dari ${items.length} barang`;
+  document.getElementById('tabItems').textContent = `Barang (${items.length})`;
+  if (!filteredItems.length) { el.innerHTML=emptyState('Tidak ada barang ditemukan'); document.getElementById('itemsPagination').innerHTML=''; return; }
+  const start = (itemPage-1)*ITEMS_PER_PAGE, end = start+ITEMS_PER_PAGE;
+  const pageItems = filteredItems.slice(start,end);
+  el.innerHTML = `<table>
+    <thead><tr><th>#</th><th>Nama Barang</th><th>Kode</th><th>Kategori</th><th>Ukuran</th><th>Supplier</th><th></th></tr></thead>
+    <tbody>${pageItems.map((it,i)=>`
+      <tr>
+        <td style="color:var(--muted)">${start+i+1}</td>
+        <td class="fw6">${esc(it.name)}</td>
+        <td><span class="badge bg-blue">${esc(it.code)}</span></td>
+        <td><span class="badge ${kelpClass(it.kelp)}">${esc(it.kelp||'—')}</span></td>
+        <td style="font-size:12px;color:var(--muted)">${esc(it.ukuran||'—')}</td>
+        <td style="font-size:12px">${esc(it.supplierName||'—')}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="confirmDelete('Barang','Hapus barang ini?',()=>delItem('${it.id}'))"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  renderItemsPagination();
+}
+
+function renderItemsPagination() {
+  const total = Math.ceil(filteredItems.length/ITEMS_PER_PAGE);
+  const el = document.getElementById('itemsPagination');
+  if (total<=1) { el.innerHTML=''; return; }
+  let html = '';
+  const start = Math.max(1, itemPage-2), end = Math.min(total, itemPage+2);
+  if (start>1) html += `<button class="pgbtn" onclick="goPage(1)">1</button>${start>2?'<span style="padding:4px">…</span>':''}`;
+  for (let p=start;p<=end;p++) html += `<button class="pgbtn ${p===itemPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  if (end<total) html += `${end<total-1?'<span style="padding:4px">…</span>':''}<button class="pgbtn" onclick="goPage(${total})">${total}</button>`;
+  el.innerHTML = html;
+}
+function goPage(p) { itemPage=p; renderItemsTable(); }
+
+async function addItem() {
+  const name = document.getElementById('liName').value.trim();
+  const code = document.getElementById('liCode').value.trim();
+  const kelp = document.getElementById('liKelp').value;
+  const ukuran = document.getElementById('liUkuran').value.trim();
+  const supSel = document.getElementById('liSup');
+  const supplierCode = supSel.value;
+  const supplierName = supSel.options[supSel.selectedIndex]?.dataset.name||'';
+  const err = document.getElementById('itemErr');
+  if (!name||!code) { showErr(err,'Nama dan kode barang wajib diisi'); return; }
+  err.style.display='none';
+  try {
+    await apiFetch('/items','POST',{name,code,supplierCode,supplierName,ukuran,kelp});
+    ['liName','liCode','liUkuran'].forEach(id=>document.getElementById(id).value='');
+    await loadItems(); filterItems(); populateDropdowns();
+  } catch(e) { showErr(err,e.message); }
+}
+
+async function delItem(id) {
+  await apiFetch('/items/'+id,'DELETE');
+  await loadItems(); filterItems(); populateDropdowns();
+}
+
+// ─── LIBRARY: SUPPLIERS ───────────────────────
+function filterSuppliers() {
+  const q = document.getElementById('supSearch').value.toLowerCase();
+  const filtered = q ? suppliers.filter(s=>s.name.toLowerCase().includes(q)||s.code.toLowerCase().includes(q)) : suppliers;
+  document.getElementById('supCount').textContent = suppliers.length;
+  const el = document.getElementById('suppliersTable');
+  if (!filtered.length) { el.innerHTML=emptyState('Tidak ada supplier ditemukan'); return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>#</th><th>Nama Supplier</th><th>Kode</th><th>Telepon</th><th></th></tr></thead>
+    <tbody>${filtered.map((s,i)=>`
+      <tr>
+        <td style="color:var(--muted)">${i+1}</td>
+        <td class="fw6">${esc(s.name)}</td>
+        <td><span class="badge bg-amber">${esc(s.code)}</span></td>
+        <td style="color:var(--muted)">${esc(s.phone||'—')}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="confirmDelete('Supplier','Hapus supplier ini?',()=>delSup('${s.id}'))"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+function renderSuppliersTable() { filterSuppliers(); }
+
+async function addSupplier() {
+  const name  = document.getElementById('lsName').value.trim();
+  const code  = document.getElementById('lsCode').value.trim();
+  const phone = document.getElementById('lsPhone').value.trim();
+  const err   = document.getElementById('supErr');
+  if (!name||!code) { showErr(err,'Nama dan kode wajib diisi'); return; }
+  err.style.display='none';
+  try {
+    await apiFetch('/suppliers','POST',{name,code,phone});
+    ['lsName','lsCode','lsPhone'].forEach(id=>document.getElementById(id).value='');
+    await loadSuppliers(); renderSuppliersTable(); populateDropdowns();
+  } catch(e) { showErr(err,e.message); }
+}
+
+async function delSup(id) {
+  await apiFetch('/suppliers/'+id,'DELETE');
+  await loadSuppliers(); renderSuppliersTable(); populateDropdowns();
+}
+
+// ─── DROPDOWNS ────────────────────────────────
+function populateDropdowns() {
+  // Supplier dropdown di form item
+  const liSup = document.getElementById('liSup');
+  liSup.innerHTML = '<option value="">— Pilih supplier —</option>' +
+    suppliers.map(s=>`<option value="${esc(s.code)}" data-name="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  liSup.onchange = function() {
+    const opt = this.options[this.selectedIndex];
+    document.getElementById('liSupName').value = opt?.dataset.name||'';
+  };
+  // Supplier filter di tabel items
+  const itemSupFilter = document.getElementById('itemSupFilter');
+  itemSupFilter.innerHTML = '<option value="">Semua supplier</option>' +
+    suppliers.map(s=>`<option value="${esc(s.code)}">${esc(s.name)}</option>`).join('');
+}
+
+// ─── RECEIPT ──────────────────────────────────
+function populateReceiptMonths() {
+  const sel = document.getElementById('rcMonth');
+  const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const d = new Date(currentDate);
+  const months = [];
+  for (let i=0;i<12;i++) {
+    const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0');
+    months.push({ val:`${y}-${m}`, lbl:`${monthNames[d.getMonth()]} ${y}` });
+    d.setMonth(d.getMonth()-1);
+  }
+  sel.innerHTML = months.map(m=>`<option value="${m.val}">${m.lbl}</option>`).join('');
+}
+
+async function loadReceipt() {
+  const ym = document.getElementById('rcMonth').value;
+
+  if (!ym) return;
+  const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const [y,mo] = ym.split('-');
+  const label = monthNames[parseInt(mo)-1] + ' ' + y;
+
+  document.getElementById('receiptBody').innerHTML = '<div class="card"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><p>Memuat data...</p></div></div>';
+
+  try {
+    const url = '/receipt/'+ym;   // ← HANYA BARIS INI YANG BERUBAH
+    receiptData = await apiFetch(url);
+    renderReceipt(receiptData, label);
+  } catch(e) {
+    document.getElementById('receiptBody').innerHTML = '<div class="card"><div class="empty"><i class="fa-solid fa-circle-exclamation"></i><p>Gagal memuat data</p></div></div>';
+  }
+}
+
+function renderReceipt(data, label) {
+  const el = document.getElementById('receiptBody');
+  if (!data.items||!data.items.length) {
+    el.innerHTML='<div class="card"><div class="empty"><i class="fa-solid fa-inbox"></i><p>Tidak ada data tracking untuk periode ini</p></div></div>';
+    return;
+  }
+  const {totalItems,totalQty,totalDays} = data.summary;
+
+  // Group by kelp for summary
+  const byKelp = {};
+  data.items.forEach(it => {
+    const k = it.kelp||'—';
+    if (!byKelp[k]) byKelp[k]={kelp:k,count:0,totalQty:0};
+    byKelp[k].count++; byKelp[k].totalQty+=it.totalQty;
+  });
+
+  el.innerHTML = `
+    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metric"><div class="mi g"><i class="fa-solid fa-box"></i></div><div><div class="mval">${totalItems}</div><div class="mlbl">Jenis Barang</div></div></div>
+      <div class="metric"><div class="mi b"><i class="fa-solid fa-cubes"></i></div><div><div class="mval">${totalQty.toFixed(0)}</div><div class="mlbl">Total Qty</div></div></div>
+      <div class="metric"><div class="mi a"><i class="fa-solid fa-calendar-check"></i></div><div><div class="mval">${totalDays}</div><div class="mlbl">Hari Kerja</div></div></div>
+    </div>
+
+    <!-- Rekap per Kategori -->
+    <div class="card" style="margin-bottom:1rem">
+      <div class="ctitle"><i class="fa-solid fa-layer-group"></i> Rekap per Kategori — ${label}</div>
+      <div class="twrap"><table>
+        <thead><tr><th>Kategori</th><th>Jenis Barang</th><th>Total Qty</th></tr></thead>
+        <tbody>${Object.values(byKelp).sort((a,b)=>a.kelp.localeCompare(b.kelp)).map(k=>`
+          <tr>
+            <td><span class="badge ${kelpClass(k.kelp)}">${esc(k.kelp)}</span></td>
+            <td>${k.count} jenis</td>
+            <td><strong>${k.totalQty.toFixed(0)}</strong></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- Detail per Barang -->
+    <div class="card">
+      <div class="ctitle"><i class="fa-solid fa-table-list"></i> Detail per Barang</div>
+      <div class="twrap"><table>
+        <thead><tr><th>#</th><th>Nama Barang</th><th>Kode</th><th>Kategori</th><th>Ukuran</th><th>Supplier</th><th>Total Qty</th><th>Sat</th><th>Hari Aktif</th></tr></thead>
+        <tbody>${data.items.map((it,i)=>`
+          <tr>
+            <td style="color:var(--muted)">${i+1}</td>
+            <td class="fw6">${esc(it.itemName)}</td>
+            <td><span class="badge bg-blue">${esc(it.itemCode)}</span></td>
+            <td><span class="badge ${kelpClass(it.kelp)}">${esc(it.kelp||'—')}</span></td>
+            <td style="font-size:12px;color:var(--muted)">${esc(it.ukuran||'—')}</td>
+            <td style="font-size:12px">${esc(it.supplierName||'—')}</td>
+            <td><strong>${it.totalQty.toFixed(0)}</strong></td>
+            <td style="color:var(--muted)">${esc(it.sat||'')}</td>
+            <td><span class="badge bg-green">${it.days} hari</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span style="color:var(--muted)">Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}</span>
+        <strong>Total: ${totalQty.toFixed(0)} qty dari ${totalItems} jenis barang (${totalDays} hari kerja)</strong>
+      </div>
+    </div>`;
+}
+
+// ─── PDF ──────────────────────────────────────
+function downloadPDF() {
+  if (!receiptData||!receiptData.items||!receiptData.items.length) {
+    alert('Tidak ada data untuk di-export. Pilih bulan yang memiliki data tracking.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const ym   = document.getElementById('rcMonth').value;
+  const mn   = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const [y,mo] = ym.split('-');
+  const label = mn[parseInt(mo)-1]+' '+y;
+  const {totalItems,totalQty,totalDays} = receiptData.summary;
+  const pw = 210; let cy = 20;
+
+  // ── Header ──
+    doc.setFillColor(29,158,117);
+    doc.roundedRect(15, cy-8, pw-30, 26, 3, 3, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text('RECEIPT PEMBELIAN BULANAN', pw/2, cy+2, {align:'center'});
+    doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text('Periode: ' + label, pw/2, cy+9, {align:'center'});
+    cy += 28;
+
+  doc.autoTable({
+  startY: cy,
+  head:[['#','Nama Barang','Kode','Kategori','Ukuran','Supplier','Total Qty','Sat','Hari']],
+  body: receiptData.items.map((it,i)=>[
+    i+1, it.itemName, it.itemCode,
+    it.kelp||'—', it.ukuran||'—', it.supplierName||'—',
+    it.totalQty.toFixed(0), it.sat||'', it.days+' hr'
+  ]),
+  styles:{fontSize:8, cellPadding:3},
+  headStyles:{fillColor:[29,158,117], textColor:255, fontStyle:'bold'},
+  alternateRowStyles:{fillColor:[247,252,249]},
+  columnStyles:{
+    0:{cellWidth:8, halign:'center'},
+    2:{cellWidth:22},
+    3:{cellWidth:20},
+    5:{cellWidth:36},
+    6:{cellWidth:18, halign:'center'},
+    7:{cellWidth:12},
+    8:{cellWidth:14, halign:'center'}
+  },
+  margin:{left:15, right:15}
+});
+
+  const fy = doc.lastAutoTable.finalY + 8;
+
+// ── Garis pemisah ──
+doc.setDrawColor(200,200,200);
+doc.line(15, fy-4, pw-15, fy-4);
+
+// ── TTD pojok kanan ──
+const ttdY = fy + 6;
+doc.setFontSize(8); doc.setTextColor(150,150,150);
+doc.text(
+  'Dicetak: ' + new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),
+  pw-20, ttdY, {align:'right'}
+);
+doc.setFontSize(9); doc.setTextColor(30,30,30);
+doc.text('Dibuat oleh,', pw-20, ttdY + 10, {align:'right'});
+doc.text(currentUser, pw-20, ttdY + 36, {align:'right'});
+
+doc.save('receipt-' + ym + '.pdf');
+}
+
+// ─── HELPERS ─────────────────────────────────
+function kelpClass(k) {
+  if (!k) return 'bg-amber';
+  if (k.startsWith('1')) return 'kelp-1';
+  if (k.startsWith('2')) return 'kelp-2';
+  if (k.startsWith('3')) return 'kelp-3';
+  if (k.startsWith('4')) return 'kelp-4';
+  if (k.startsWith('5')) return 'kelp-5';
+  if (k.startsWith('6')) return 'kelp-6';
+  return 'bg-amber';
+}
+function formatDate(d){const p=d.split('-'),m=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];return p[2]+' '+m[parseInt(p[1])-1]+' '+p[0];}
+function checkEndMonth(){const d=new Date(currentDate);const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();document.getElementById('endMonthAlert').style.display=d.getDate()>=28?'flex':'none';}
+function showErr(el,msg){el.style.display='block';el.textContent=msg;}
+function emptyState(msg){return`<div class="empty"><i class="fa-solid fa-inbox"></i><p>${msg}</p></div>`;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function setBtnLoading(id,loading,label){const b=document.getElementById(id);b.disabled=loading;if(!loading)b.innerHTML=label;}
+function confirmDelete(title,msg,cb){deleteCallback=cb;document.getElementById('modalTitle').textContent='Hapus '+title;document.getElementById('modalMsg').textContent=msg;document.getElementById('modalBg').classList.add('open');}
+document.getElementById('modalOkBtn').onclick=async()=>{if(deleteCallback)await deleteCallback();closeModal();};
+function closeModal(){document.getElementById('modalBg').classList.remove('open');deleteCallback=null;}
+
+// ─── BOOT ─────────────────────────────────────
+initLogin();
+</script>
+</body>
+</html>
