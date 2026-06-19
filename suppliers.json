@@ -1,0 +1,345 @@
+[
+  {
+    "id": "SP0001",
+    "name": "AMAK FIRDAUS UTOMO.PT",
+    "code": "SUP-001",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0002",
+    "name": "ANUGRAH SURYA JAYA.PT",
+    "code": "SUP-002",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0003",
+    "name": "AURI STEEL METALINDO. PT",
+    "code": "SUP-003",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0004",
+    "name": "BATRAJA MAKMUR WIRATAMA",
+    "code": "SUP-004",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0005",
+    "name": "BATRAJA MAKMUR WIRETAMA .PT",
+    "code": "SUP-005",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0006",
+    "name": "BERLIAN SENTOSA SINERGY, PT",
+    "code": "SUP-006",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0007",
+    "name": "BESI BAJA METALINDO",
+    "code": "SUP-007",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0008",
+    "name": "BIG",
+    "code": "SUP-008",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0009",
+    "name": "BILDO BANGUN PERKASA.PT",
+    "code": "SUP-009",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0010",
+    "name": "CIPTAPAPAN DINAMIKA.PT",
+    "code": "SUP-010",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0011",
+    "name": "CITICON NUSANTARA INDUSTRIES, PT",
+    "code": "SUP-011",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0012",
+    "name": "DELTAMAS PRIMA SENTOSA",
+    "code": "SUP-012",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0013",
+    "name": "DURO INDUSTRI INDONESIA, PT",
+    "code": "SUP-013",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0014",
+    "name": "EKON CIPTA INDONESIA",
+    "code": "SUP-014",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0015",
+    "name": "ELISON GLOBAL PT",
+    "code": "SUP-015",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0016",
+    "name": "FOCON INTERLITE.PT",
+    "code": "SUP-016",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0017",
+    "name": "GRAHA SPECTRUM PLASTINDO , CV",
+    "code": "SUP-017",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0018",
+    "name": "GRAHA VICTORI INDUSTRI",
+    "code": "SUP-018",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0019",
+    "name": "GRESBOARD",
+    "code": "SUP-019",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0020",
+    "name": "INDOSTAR BUILDING MATERIAL. PT",
+    "code": "SUP-020",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0021",
+    "name": "INTISUMBER BAJASAKTI,PT.",
+    "code": "SUP-021",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0022",
+    "name": "KENCANA VIVO LITE",
+    "code": "SUP-022",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0023",
+    "name": "LANCAR BOLA BATU SEJAHTERA.PT",
+    "code": "SUP-023",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0024",
+    "name": "MAJU ANUGRAH JAYA UNGGUL, PT",
+    "code": "SUP-024",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0025",
+    "name": "MDU ANUGRAH",
+    "code": "SUP-025",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0026",
+    "name": "MERCUSUAR INDUSTRI BETON.PT",
+    "code": "SUP-026",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0027",
+    "name": "MITRA TIARA INDONESIA",
+    "code": "SUP-027",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0028",
+    "name": "NON SMN",
+    "code": "SUP-028",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0029",
+    "name": "NUSA UNGGUL SARANA ADICIPTA.PT",
+    "code": "SUP-029",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0030",
+    "name": "NUSANTARA SENTRAL STEEL, PT",
+    "code": "SUP-030",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0031",
+    "name": "PRIORITY ONE INDONESIA, PT",
+    "code": "SUP-031",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0032",
+    "name": "SARANA SENTRAL",
+    "code": "SUP-032",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0033",
+    "name": "SARANA SENTRAL STEELINDO",
+    "code": "SUP-033",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0034",
+    "name": "SARI ALAM SEJAHTERA PT",
+    "code": "SUP-034",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0035",
+    "name": "SEMEN GRESIK PT.",
+    "code": "SUP-035",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0036",
+    "name": "SEMEN INDONESIA DISTRIBUTOR.PT",
+    "code": "SUP-036",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0037",
+    "name": "SEMEN PADANG",
+    "code": "SUP-037",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0038",
+    "name": "SHICA JAYA SENTOSA",
+    "code": "SUP-038",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0039",
+    "name": "SHICA JAYA SENTOSA PT.",
+    "code": "SUP-039",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0040",
+    "name": "SIANTAR WIRETAMA INDONESIA, PT.",
+    "code": "SUP-040",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0041",
+    "name": "SINAR MULIA INTI MAKMUR .PT",
+    "code": "SUP-041",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0042",
+    "name": "SINAR RAYA , CV",
+    "code": "SUP-042",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0043",
+    "name": "SUMBER URIP SEJATI ,PT",
+    "code": "SUP-043",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0044",
+    "name": "SURYA BANGUN GEMILANG.PT",
+    "code": "SUP-044",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0045",
+    "name": "SURYA CIPTA BARU",
+    "code": "SUP-045",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0046",
+    "name": "SURYA TATA ALAM RAYA, PT",
+    "code": "SUP-046",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0047",
+    "name": "TJIANG TJU TJIANG",
+    "code": "SUP-047",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0048",
+    "name": "TRIARTA ADI TAMA",
+    "code": "SUP-048",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "SP0049",
+    "name": "TRIPILAR BETON MAS.PT",
+    "code": "SUP-049",
+    "phone": "",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]
